@@ -28,7 +28,14 @@ global metrics and the Fear & Greed index, powered by the
    - *Simple:* put the key in any cell and name that cell `BITCULATOR_KEY`
      (Data → Named ranges). Anyone who can open the sheet can see it — fine
      for personal sheets, not for shared ones.
-4. Type `=BITCULATOR_PRICE("bitcoin")` in a cell.
+4. **First run only — authorize your own script.** Google shows a
+   *"Google hasn't verified this app"* warning whenever a personal Apps Script
+   asks for permissions (here: fetching from the API, storing your key). The
+   "developer" it warns about is **you** — your own account, running your own
+   pasted script. Click **Advanced → Go to project (unsafe) → Allow**.
+   (Marketplace verification only applies to published add-ons; a pasted
+   script always shows this screen once.)
+5. Type `=BITCULATOR_PRICE("bitcoin")` in a cell.
 
 ## Quota-friendly by design
 
