@@ -163,18 +163,22 @@ function BITCULATOR_CONVERT(amount, from, to) {
   return numify_(data);
 }
 
+/** API interval names + the shorthands spreadsheet users actually type. */
+var INTERVAL_ALIASES = { '1m': 'minutely', '30m': 'half-hourly', '1h': 'hourly', '1d': 'daily' };
+
 /**
  * OHLC candle history — spills a table of Date | Open | High | Low | Close.
  *
  * @param {"bitcoin"} slug Coin slug.
- * @param {"1d"} interval Candle interval (default "1d").
+ * @param {"daily"} interval minutely, half-hourly, hourly or daily (default daily; 1m/30m/1h/1d also accepted).
  * @param {30} limit Number of candles (default 30).
  * @return {Array<Array>} A table of candles, newest last.
  * @customfunction
  */
 function BITCULATOR_HISTORY(slug, interval, limit) {
   if (!slug) throw new Error('Bitculator: pass a coin slug.');
-  var params = { interval: interval || '1d', limit: limit || 30 };
+  var normalized = String(interval || 'daily').toLowerCase();
+  var params = { interval: INTERVAL_ALIASES[normalized] || normalized, limit: limit || 30 };
   var rows = fetch_('/coins/' + encodeURIComponent(slug) + '/history', params);
   if (!rows || !rows.length) return [['(no data)']];
 
@@ -182,24 +186,44 @@ function BITCULATOR_HISTORY(slug, interval, limit) {
   var table = [header];
   for (var i = 0; i < rows.length; i++) {
     var candle = rows[i];
+    var when = candle.time || candle.date || candle.timestamp || '';
+    var parsed = when ? new Date(when) : null;
     table.push([
-      candle.date || candle.time || candle.timestamp || '',
+      parsed && !isNaN(parsed.getTime()) ? parsed : when,
       numify_(candle.open), numify_(candle.high), numify_(candle.low), numify_(candle.close),
     ]);
   }
   return table;
 }
 
+/** Friendly names → the /global endpoint's real keys. */
+var GLOBAL_ALIASES = {
+  marketcap: 'total_marketcap',
+  volume: 'total_volume_24h',
+  volume_24h: 'total_volume_24h',
+  cryptocurrencies: 'total_cryptocurrencies',
+  coins: 'total_cryptocurrencies',
+  tokens: 'total_tokens',
+  exchanges: 'total_exchanges',
+  pairs: 'total_pairs',
+  markets: 'total_markets',
+  feargreed: 'fear_greed',
+};
+
 /**
  * Global market metrics (marketcap, volume, dominance, …).
  *
- * @param {"marketcap"} field Field name; omit to spill all fields as rows.
+ * @param {"marketcap"} field Field name (marketcap, volume, dominance.btc, fear_greed, …); omit to spill all fields as rows.
  * @return The metric, or a two-column table of all metrics.
  * @customfunction
  */
 function BITCULATOR_GLOBAL(field) {
   var data = fetch_('/global', {});
-  if (field) return pluck_(data, field);
+  if (field) {
+    var parts = String(field).toLowerCase().split('.');
+    parts[0] = GLOBAL_ALIASES[parts[0]] || parts[0];
+    return pluck_(data, parts.join('.'));
+  }
   var table = [];
   for (var key in data) table.push([key, numify_(data[key])]);
   return table;

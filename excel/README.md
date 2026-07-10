@@ -62,7 +62,7 @@ in
 ```m
 // 90 daily BTC candles
 let
-    Response = fnBitculator("coins/bitcoin/history", [interval = "1d", limit = "90"]),
+    Response = fnBitculator("coins/bitcoin/history", [interval = "daily", limit = "90"]),
     Candles  = Table.FromRecords(Response[data])
 in
     Candles
