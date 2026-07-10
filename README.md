@@ -1,8 +1,10 @@
 # Bitculator integrations
 
 Ready-made connectors for tools that aren't programming languages — the
-spreadsheet crowd. For code, use the [official SDKs](../sdks/README.md)
-(TypeScript, Python, PHP, Go, Rust, Java, C#, C++).
+spreadsheet crowd. For code, use the
+[official SDKs](https://bitculator.com/en/crypto-api#sdks)
+(TypeScript, Python, PHP, Go, Rust, Java, C#, C++ — all under
+[github.com/Bitculator](https://github.com/Bitculator)).
 
 | Integration | What you get | Docs |
 |---|---|---|
