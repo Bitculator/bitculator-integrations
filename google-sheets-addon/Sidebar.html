@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <link rel="stylesheet" href="https://ssl.gstatic.com/docs/script/css/add-ons1.css">
+  <style>
+    body { padding: 14px; }
+    .brand { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+    .brand .dot { width: 10px; height: 10px; border-radius: 50%; background: #f0ba19; }
+    .brand strong { font-size: 15px; }
+    .status { margin: 10px 0 14px; padding: 8px 10px; border-radius: 6px; font-size: 12px; }
+    .status.ok { background: #e6f4ea; color: #137333; }
+    .status.missing { background: #fef7e0; color: #a56300; }
+    .status.error { background: #fce8e6; color: #c5221f; }
+    input[type="password"] { width: 100%; box-sizing: border-box; }
+    .row { display: flex; gap: 8px; margin-top: 10px; }
+    .hint { font-size: 11.5px; color: #5f6368; line-height: 1.5; margin-top: 14px; }
+    .hint code { background: #f1f3f4; padding: 1px 4px; border-radius: 3px; }
+    a { color: #1a73e8; }
+  </style>
+</head>
+<body>
+  <div class="brand"><span class="dot"></span><strong>Bitculator</strong></div>
+
+  <div id="status" class="status missing">Checking…</div>
+
+  <label for="key"><b>Data API key</b></label>
+  <input type="password" id="key" placeholder="bc_live_…" autocomplete="off">
+  <div class="row">
+    <button class="action" id="save" onclick="save()">Save key</button>
+    <button id="clear" onclick="clearKey()">Remove</button>
+  </div>
+
+  <p class="hint">
+    Your key is stored privately for <i>your</i> Google account — collaborators
+    on this sheet never see it and need their own.
+    <a href="https://bitculator.com/user/developer/api" target="_blank" rel="noopener">Create a free key</a>
+    (no card required).
+  </p>
+  <p class="hint">
+    Then type <code>=BITCULATOR_PRICE("bitcoin")</code> in any cell.
+    All functions: <code>=BITCULATOR()</code>, <code>=BITCULATOR_CONVERT()</code>,
+    <code>=BITCULATOR_HISTORY()</code>, <code>=BITCULATOR_GLOBAL()</code>,
+    <code>=BITCULATOR_FEARGREED()</code> —
+    <a href="https://bitculator.com/en/documentation/api/v1" target="_blank" rel="noopener">API reference</a>.
+  </p>
+
+  <script>
+    function render(state) {
+      var el = document.getElementById('status');
+      if (state.set) {
+        el.className = 'status ok';
+        el.textContent = 'Key saved (' + state.tail + ') — formulas are live.';
+      } else {
+        el.className = 'status missing';
+        el.textContent = 'No key saved yet.';
+      }
+      document.getElementById('key').value = '';
+    }
+    function fail(err) {
+      var el = document.getElementById('status');
+      el.className = 'status error';
+      el.textContent = (err && err.message) ? err.message : String(err);
+    }
+    function save() {
+      google.script.run.withSuccessHandler(render).withFailureHandler(fail)
+        .saveApiKey(document.getElementById('key').value);
+    }
+    function clearKey() {
+      google.script.run.withSuccessHandler(render).withFailureHandler(fail).clearApiKey();
+    }
+    google.script.run.withSuccessHandler(render).withFailureHandler(fail).keyStatus();
+  </script>
+</body>
+</html>

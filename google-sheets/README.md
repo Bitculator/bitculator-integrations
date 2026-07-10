@@ -14,28 +14,81 @@ global metrics and the Fear & Greed index, powered by the
 =BITCULATOR_FEARGREED()                     Fear & Greed index
 ```
 
-## Install (2 minutes)
+## Install (5 minutes, one time)
 
-1. **Get an API key** — free tier, no card: create one in your
-   [developer console](https://bitculator.com/user/developer/api).
-2. In your spreadsheet: **Extensions → Apps Script**, delete the sample code,
-   paste the contents of [`Code.gs`](Code.gs), and save.
-3. **Set your key** (pick one):
-   - *Hidden (recommended):* in the Apps Script editor, edit `setApiKey()`,
-     paste your key into the placeholder, run it once (Run ▶), then remove the
-     key from the source again. It is stored in Script Properties, invisible
-     to people you share the sheet with.
-   - *Simple:* put the key in any cell and name that cell `BITCULATOR_KEY`
-     (Data → Named ranges). Anyone who can open the sheet can see it — fine
-     for personal sheets, not for shared ones.
-4. **First run only — authorize your own script.** Google shows a
-   *"Google hasn't verified this app"* warning whenever a personal Apps Script
-   asks for permissions (here: fetching from the API, storing your key). The
-   "developer" it warns about is **you** — your own account, running your own
-   pasted script. Click **Advanced → Go to project (unsafe) → Allow**.
-   (Marketplace verification only applies to published add-ons; a pasted
-   script always shows this screen once.)
-5. Type `=BITCULATOR_PRICE("bitcoin")` in a cell.
+### 1 · Get an API key
+
+Free tier, no card: create one in your
+[developer console](https://bitculator.com/user/developer/api) and keep the
+tab open — you'll paste the key in step 3.
+
+### 2 · Paste the script
+
+In your spreadsheet: **Extensions → Apps Script**. An editor opens with a
+sample `function myFunction() {}` — delete it, paste the whole contents of
+[`Code.gs`](Code.gs), and press the 💾 save icon (or Ctrl/Cmd+S).
+
+### 3 · Put your key into `setApiKey()`
+
+In the editor, find this line near the top and replace the placeholder with
+your real key (keep the quotes):
+
+```js
+var key = 'PASTE-YOUR-API-KEY-HERE';   →   var key = 'bc_live_your-key';
+```
+
+Save again. Make sure the function dropdown in the toolbar (next to Debug)
+says **setApiKey**, then press **▶ Run**.
+
+### 4 · Authorize the script — the scary-looking part, explained
+
+The first Run pops up Google's authorization window. This is normal: the
+script needs permission to call the Bitculator API and to store your key,
+and because it is a *personal pasted script* (not a Marketplace add-on),
+Google brands it "unverified". **The "developer" it warns you about is you —
+your own account running your own script.** Walk it through:
+
+1. Pick your Google account.
+2. On the **"Google hasn't verified this app"** screen, click the small grey
+   **Advanced** link — bottom-left, on the same row as the blue
+   "Back to safety" button.
+3. The dialog expands: click **Go to Untitled project (unsafe)** at the
+   bottom.
+4. On the permissions screen, click **Allow**.
+
+Common stumbles:
+
+- **"This project requires access to your Google Account to run. Please try
+  again and allow it this time."** in the execution log — you closed the
+  popup or clicked "Back to safety", so the run aborted unauthorized. Press
+  ▶ Run again and complete all four clicks above.
+- **The popup never appears or closes itself** — a popup blocker (Brave
+  shields, strict adblock) is eating it. Allow popups for
+  `script.google.com` and run again.
+- **"Edit setApiKey() and replace the placeholder with your real key first."**
+  — that's this script's own guard rail: step 3 wasn't done. Paste your real
+  key and run again.
+
+A successful run logs *Execution completed* with no red text. Your key is now
+in Script Properties (invisible to people you share the sheet with) — you can
+delete it from the `setApiKey()` source line if you like.
+
+> **No-editor alternative:** skip steps 3–4's key handling by putting the key
+> in a cell instead — name any cell `BITCULATOR_KEY` (Data → Named ranges)
+> and paste the key there. Simpler, but anyone who can open the sheet can
+> read the key — fine for personal sheets, not shared ones. (The first
+> formula you type still triggers the authorization popup of step 4.)
+
+### 5 · Use it
+
+Back in the sheet, type in any cell:
+
+```
+=BITCULATOR_PRICE("bitcoin")
+```
+
+If a price appears — you're done. Every function is listed at the top of
+this page.
 
 ## Quota-friendly by design
 

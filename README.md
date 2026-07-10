@@ -9,6 +9,7 @@ spreadsheet crowd. For code, use the
 | Integration | What you get | Docs |
 |---|---|---|
 | **Google Sheets** | `=BITCULATOR_PRICE("bitcoin")` and friends — custom functions with 60s caching | [google-sheets/](google-sheets/) |
+| **Google Sheets add-on** | Same functions as a one-click Workspace Marketplace install (sidebar for the key, no code editing) | [google-sheets-addon/](google-sheets-addon/) *(Marketplace review pending)* |
 | **Microsoft Excel** | Power Query refreshable tables (desktop) + Office Script (web/365) | [excel/](excel/) |
 
 All of them use the [Bitculator Data API](https://bitculator.com/en/crypto-api)
